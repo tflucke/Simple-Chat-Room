@@ -1,0 +1,11 @@
+[Unit]
+Description=Chat Room Page
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node main.js
+Environment=PATH=/usr/bin:/usr/local/bin
+WorkingDirectory=/home/tflucke/public_nodejs/chatRoom/
+
+[Install]
+WantedBy=multi-user.target
