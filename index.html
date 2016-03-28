@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<title>Basic Chat Page</title>
+		<style type="text/css">
+			textarea
+			{
+				width: 100%;
+				resize: none;
+				min-height: 2em;
+			}
+			.italics
+			{
+				font-style: italic;
+			}
+		</style>
+		<script src="socket.io/socket.io.js"></script>
+		<script type="text/javascript">
+			var user;
+			var socket = io.connect(window.location.href);
+			socket.on('notification', function (data)
+			{
+				var elm = document.getElementById("display");
+				elm.innerHTML = elm.innerHTML + data;
+			});
+			function init()
+			{
+				do
+				{
+					user = window.prompt("Enter a username here (Minimum 2 chars).");
+				}
+				while (user == null || user.trim().length < 2);
+				ajax({username: user});
+			}
+			function autoGrow(element)
+			{
+				element.style.height = (element.scrollHeight)+"px";
+			}
+			function submit()
+			{
+				var elm = document.getElementById("userinput");
+				ajax({
+					username: user,
+					message: elm.value
+				});
+				elm.value = "";
+			}
+			function ajax(data, fn)
+			{
+/*				var xhttp = new XMLHttpRequest();
+				if (fn != undefined)
+				{
+					xhttp.onreadystatechange = function()
+					{
+						if (xhttp.readyState == 4 && xhttp.status == 200)
+						{
+							fn(xhttp.responseText);
+						}
+					};
+				}
+				xhttp.open("POST", "index.html", true);
+				xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xhttp.send(jsonToURL(data));*/
+				socket.emit('notification', data);
+			}
+			function jsonToURL(data)
+			{
+				var result = "";
+				for (key in data)
+				{
+					result += encodeURIComponent(key)+"="+encodeURIComponent(data[key])+"&";
+				}
+				return result;
+			}
+		</script>
+	</head>
+	<body onload="init();">
+		<table style="width: 100%; height: 100%;">
+			<tr>
+				<td colspan="2" style="height: 100%;">
+					<div id="display" style="height: 100%; border: 1px solid #000000;"></div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 100%;">
+					<textarea id="userinput" style="overflow: hidden;" onkeyup="autoGrow(this);" placeholder="Type your message here!"></textarea>
+				</td>
+				<td>
+					<button type="button" id="enterButton" onclick="submit();">Enter</button>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
